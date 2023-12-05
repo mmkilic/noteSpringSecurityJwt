@@ -1,0 +1,66 @@
+[
+	{
+		"email": "mehmet@mmk.com",
+		"firstName": "Mehmet",
+		"lastName": "KILIC",
+		"password": "1234",
+		"active": true,
+		"role": "ADM"
+	},
+	{
+		"email": "berk@mmk.com",
+		"firstName": "Berk",
+		"lastName": "GÖKÇEN",
+		"password": "1234",
+		"active": true,
+		"role": "ADM"
+	},
+	{
+		"email": "ozge@mmk.com",
+		"firstName": "Ozge",
+		"lastName": "CESUR",
+		"password": "1234",
+		"active": false,
+		"role": "USR"
+	},
+	{
+		"email": "yagmur@mmk.com",
+		"firstName": "Yağmur",
+		"lastName": "KOPARAN",
+		"password": "1234",
+		"active": true,
+		"role": "USR"
+	},
+	{
+		"email": "gizem@mmk.com",
+		"firstName": "Gizem",
+		"lastName": "KIZILHAN",
+		"password": "1234",
+		"active": false,
+		"role": "USR"
+	},
+	{
+		"email": "erdi@mmk.com",
+		"firstName": "Erdi",
+		"lastName": "SENCAN",
+		"password": "1234",
+		"active": true,
+		"role": "USR"
+	},
+	{
+		"email": "beyza@mmk.com",
+		"firstName": "Beyza",
+		"lastName": "DURSUN",
+		"password": "1234",
+		"active": true,
+		"role": "MNG"
+	},
+		{
+		"email": "samet@mmk.com",
+		"firstName": "Samet",
+		"lastName": "ÇEVİK",
+		"password": "1234",
+		"active": true,
+		"role": "MNG"
+	}
+]
