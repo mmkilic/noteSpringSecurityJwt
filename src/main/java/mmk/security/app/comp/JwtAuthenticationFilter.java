@@ -1,4 +1,4 @@
-package mmk.security.app.auth;
+package mmk.security.app.comp;
 
 import java.io.IOException;
 
@@ -28,11 +28,8 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
   private final TokenRepository tokenRepository;
 
   @Override
-  protected void doFilterInternal(
-      @NonNull HttpServletRequest request,
-      @NonNull HttpServletResponse response,
-      @NonNull FilterChain filterChain
-  ) throws ServletException, IOException {
+  protected void doFilterInternal(@NonNull HttpServletRequest request, @NonNull HttpServletResponse response, @NonNull FilterChain filterChain) 
+		  																									throws ServletException, IOException {
     if (request.getServletPath().contains("/auth")) {
       filterChain.doFilter(request, response);
       return;

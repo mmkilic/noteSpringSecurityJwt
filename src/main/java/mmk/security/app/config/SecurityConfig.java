@@ -4,7 +4,7 @@ import static org.springframework.security.config.http.SessionCreationPolicy.STA
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
+//import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -13,13 +13,15 @@ import org.springframework.security.config.annotation.method.configuration.Enabl
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutHandler;
 
 import lombok.RequiredArgsConstructor;
-import mmk.security.app.auth.JwtAuthenticationFilter;
-import mmk.security.app.enums.Role;
+import mmk.security.app.comp.JwtAuthenticationFilter;
+import mmk.security.app.enums.Authority;
 import mmk.security.app.service.UserJwtService;
 
 @Configuration
@@ -31,28 +33,33 @@ public class SecurityConfig {
 	private final JwtAuthenticationFilter jwtAuthFilter;
 	private final UserJwtService userService;
 	private final PasswordEncoder passwordEncoder;
+	private final LogoutHandler logoutHandler;
 	
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 
         http.csrf(AbstractHttpConfigurer::disable)
         	.authorizeHttpRequests(req ->  
         		req.requestMatchers("/auth/**")
         		.permitAll()
-        		.requestMatchers(HttpMethod.GET, "/users/**").hasAnyRole(Role.ROLE_ADMIN.getValue())
-        		.requestMatchers("/app/**")/*.hasAnyAuthority(Role.ROLE_ADMIN.getAuthority(), Role.ROLE_USER.getAuthority())*/
-        		.authenticated()
+        		.requestMatchers("/adm/**").hasAnyAuthority(Authority.ROLE_ADMIN.getAuthority())
+        		.requestMatchers("/users/**").hasAnyAuthority(Authority.ROLE_ADMIN.getAuthority(), Authority.ROLE_USER.getAuthority())
         		.anyRequest()
                 .authenticated())
         	.sessionManagement(session -> session.sessionCreationPolicy(STATELESS))
         	.authenticationProvider(authenticationProvider())
             .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         
+        http.logout(logout ->
+        		logout.logoutUrl("/auth/logout")
+        			.addLogoutHandler(logoutHandler)
+        			.logoutSuccessHandler((request, response, authentication) -> SecurityContextHolder.clearContext()));
+        
         return http.build();
     }
     
     @Bean
-    public AuthenticationProvider authenticationProvider() {
+    AuthenticationProvider authenticationProvider() {
       DaoAuthenticationProvider authProvider = new DaoAuthenticationProvider();
       authProvider.setUserDetailsService(userService);
       authProvider.setPasswordEncoder(passwordEncoder);
@@ -60,7 +67,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
+    AuthenticationManager authenticationManager(AuthenticationConfiguration config) throws Exception {
       return config.getAuthenticationManager();
     }
 

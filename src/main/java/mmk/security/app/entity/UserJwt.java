@@ -1,11 +1,11 @@
 package mmk.security.app.entity;
 
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.List;
+import java.util.Set;
 
-import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -20,7 +20,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import mmk.security.app.enums.Role;
+import mmk.security.app.enums.Authority;
 
 @Entity
 @Table
@@ -47,15 +47,11 @@ public class UserJwt implements UserDetails{
 	private boolean credentialsNonExpired;
 	
 	@Enumerated(EnumType.STRING)
-	private Role role;
+	private Set<Authority> authorities;
 	
+	@JsonIgnore
 	@OneToMany(mappedBy = "userJwt")
 	private List<Token> tokens;
-
-	@Override
-	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return Arrays.asList(Role.values());
-	}
 
 	@Override
 	public String getUsername() {

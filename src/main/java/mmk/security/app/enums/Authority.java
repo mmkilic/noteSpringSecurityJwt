@@ -2,7 +2,7 @@ package mmk.security.app.enums;
 
 import org.springframework.security.core.GrantedAuthority;
 
-public enum Role implements GrantedAuthority{
+public enum Authority implements GrantedAuthority{
 
 	ROLE_USER("USER"),
     ROLE_ADMIN("ADMIN"),
@@ -11,7 +11,7 @@ public enum Role implements GrantedAuthority{
 
     private String value;
 
-    Role(String value) {
+    Authority(String value) {
         this.value = value;
     }
 
