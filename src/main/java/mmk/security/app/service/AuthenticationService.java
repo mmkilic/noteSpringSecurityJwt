@@ -54,12 +54,7 @@ public class AuthenticationService {
 					request.getEmail(),
 					request.getPassword()
 		));
-		var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
-		var jwtToken = jwtService.generateToken(user);
-		jwtService.generateRefreshToken(user);
-		revokeAllUserTokens(user);
-		saveUserToken(user, jwtToken);
-		return jwtToken;
+		return authenticateUser(request);
 	}
 	public void refreshToken(HttpServletRequest request, HttpServletResponse response) throws IOException {
 		final String authHeader = request.getHeader(HttpHeaders.AUTHORIZATION);
@@ -82,7 +77,7 @@ public class AuthenticationService {
 	}
 	public String changePassword(UserJwtRequestChangePassword request, Principal connectedUser) {
 
-        var user = (UserJwt) ((UsernamePasswordAuthenticationToken) connectedUser).getPrincipal();
+        var user = userRepository.findByEmail(request.getEmail()).get();
         
         if (!passwordEncoder.matches(request.getCurrentPassword(), user.getPassword())) {
             throw new IllegalStateException("Wrong password");
@@ -93,10 +88,18 @@ public class AuthenticationService {
         user.setPassword(passwordEncoder.encode(request.getNewPassword()));
         userRepository.save(user);
         
-        return register(user);
+        return authenticateUser(user);
     }
 	
 	
+	private String authenticateUser(UserJwt request) {
+		var user = userRepository.findByEmail(request.getEmail()).orElseThrow();
+		var jwtToken = jwtService.generateToken(user);
+		jwtService.generateRefreshToken(user);
+		revokeAllUserTokens(user);
+		saveUserToken(user, jwtToken);
+		return jwtToken;
+	}
 	private void saveUserToken(UserJwt user, String jwtToken) {
 	    var token = Token.builder()
 	    				.userJwt(user)
